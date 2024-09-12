@@ -1,8 +1,10 @@
-using ProgressBars
-packages = [:JLD2, :SparseArrays, :DataFrames, :Plots, :Random]
-for package in ProgressBar(packages)
+using ProgressMeter
+packages = [:JLD2, :SparseArrays, :DataFrames, :Plots, :Random, :TextAnalysis,
+ :Snowball, :CSV, :Graphs, :GraphRecipes, :LinearAlgebra, :NetworkLayout]
+@showprogress for package in packages
     @eval using $(package)
 end
+mm = Plots.mm
 
 struct WordNetwork
     adj::AbstractSparseMatrix
