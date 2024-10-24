@@ -1,6 +1,7 @@
 using ProgressMeter
 packages = [:JLD2, :SparseArrays, :DataFrames, :Plots, :Random, :TextAnalysis,
- :Snowball, :CSV, :Graphs, :GraphRecipes, :LinearAlgebra, :NetworkLayout]
+ :Snowball, :CSV, :Graphs, :GraphRecipes, :LinearAlgebra, :NetworkLayout,
+ :StatsBase, :LaTeXStrings]
 @showprogress for package in packages
     @eval using $(package)
 end
@@ -85,4 +86,28 @@ function plot_subgraph(WN::WordNetwork, id, depth = 5, distance = 2)
         lims = (-distance+1, distance-1), framestyle=:none)
 
     return p1
+end
+
+
+function logscatter(degree; scale = :identity, xscale = :identity, yscale = :identity, kargs...)
+    if scale == :log10 || xscale == :log10
+        xtick = exp10.(0:.1:ceil(log10(maximum(degree))))
+    else
+        xtick = eps():50:ceil(maximum(degree))
+    end
+    ytick = zeros(Int64, length(xtick))
+    for dg = degree
+        idx = findfirst(dg .≤ xtick)
+        if !isnothing(idx)
+            ytick[findfirst(dg .≤ xtick)] += 1
+        end
+    end
+    xtick, ytick = xtick[.!iszero.(ytick)], ytick[.!iszero.(ytick)]
+    if xscale == :log10
+        return scatter(xtick, ytick; xscale, kargs...)
+    elseif yscale == :log10
+        return scatter(xtick, ytick; yscale, kargs...)
+    else
+        return scatter(xtick, ytick; scale, kargs...)
+    end
 end
