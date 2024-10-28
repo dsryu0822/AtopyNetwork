@@ -22,8 +22,8 @@ N = length(txts)
 
 result = DataFrame(fd = Int64[], wd = Int64[], pt = Float64[], cp = Float64[], es = Float64[], cs1 = Float64[], cs2 = Float64[])
 for wd = wds
-    @load "/home/$(ENV["LOGNAME"])/temp/test_$wd.jld2"
-    # W_
+    W_ = jldopen("../../test_$wd.jld2")["W_"]
+    # @load "/home/$(ENV["LOGNAME"])/temp/test_$wd.jld2"
 
     wgtM_t_ = []
     θt = zeros(length(folds), length(pts))
@@ -51,9 +51,9 @@ for wd = wds
             @threads for iv = idx_v
                 wgtM_v = W_[iv]
                 adjM_v = wgtM_v .> θv[iv, ptk]
-                proper[iv] = adjM_t != adjM_v)
-                dA[iv] = count(adjM_t - adjM_v .< 0))
-                vol[iv] = count(adjM_v)/2)
+                proper[iv] = adjM_t != adjM_v
+                dA[iv] = count(adjM_t - adjM_v .< 0)
+                vol[iv] = count(adjM_v)/2
             end
             cp = 100count(iszero.(dA)) / length(dA)
             es = sum(vol) / length(vol)
