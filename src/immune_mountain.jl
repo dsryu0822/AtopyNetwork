@@ -22,7 +22,7 @@ N = length(txts)
 
 result = DataFrame(fd = Int64[], wd = Int64[], pt = Float64[], cp = Float64[], es = Float64[], cs1 = Float64[], cs2 = Float64[])
 for wd = wds
-    W_ = jldopen("../../test_$wd.jld2")["W_"]
+    W_ = jldopen("../../temp/test_$wd.jld2")["W_"]
     # @load "/home/$(ENV["LOGNAME"])/temp/test_$wd.jld2"
 
     wgtM_t_ = []
