@@ -62,7 +62,7 @@ cd("G:/corpus/"); pwd() # cd(@__DIR__)
 using Base.Threads
 @load "data_immune/cached_data.jld2"
 
-folds = 1:1
+folds = 2:5
 wds = 1:9
 pts = 5:5:95
 
