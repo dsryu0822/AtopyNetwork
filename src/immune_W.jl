@@ -21,5 +21,5 @@ for wd = 1:15
     @showprogress @threads for c in 1:N
         W_[c] = CooMatrix(crps_[c], window = wd, normalize = false).coom
     end
-    @save "test_$(wd).jld2" W_
+    @save "cached_$(wd).jld2" W_
 end

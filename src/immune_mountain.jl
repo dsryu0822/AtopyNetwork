@@ -10,19 +10,15 @@ device = gethostname()
 
 @load "data_immune/cached_data.jld2"
 
-wds = 1:5
+wds = 1:3:15
 folds = 1:5
-pts = 90:1:100
+pts = 5:5:95
 
 N = length(txts)
-# result = DataFrame(fd = Int64[], wd = Int64[], pt = Float64[], cover_score = Float64[])
-# for dr = Base.product(folds, wds, pts, 0)
-#     push!(result, dr)
-# end; sort!(result, [:fd, :wd, :pt])
-
 result = DataFrame(fd = Int64[], wd = Int64[], pt = Float64[], cp = Float64[], es = Float64[], cs1 = Float64[], cs2 = Float64[])
 for wd = wds
     W_ = jldopen("../../temp/test_$wd.jld2")["W_"]
+    # wd = 1; W_ = jldopen("weight_immune/test_$wd.jld2")["W_"]
     # @load "/home/$(ENV["LOGNAME"])/temp/test_$wd.jld2"
 
     wgtM_t_ = []
@@ -45,12 +41,12 @@ for wd = wds
     for fold = folds
         idx_v = fold:5:N; idx_t = setdiff(1:N, idx_v)
         for ptk = eachindex(pts)
-            adjM_t = wgtM_t_[fold] .> θt[fold, ptk]
+            adjM_t = wgtM_t_[fold] .≥ θt[fold, ptk]
 
             proper, dA, vol = zeros(N), zeros(N), zeros(N)
             @threads for iv = idx_v
                 wgtM_v = W_[iv]
-                adjM_v = wgtM_v .> θv[iv, ptk]
+                adjM_v = wgtM_v .≥ θv[iv, ptk]
                 proper[iv] = adjM_t != adjM_v
                 dA[iv] = count(adjM_t - adjM_v .< 0)
                 vol[iv] = count(adjM_v)/2
@@ -69,3 +65,20 @@ for wd = wds
         end
     end
 end
+
+
+# θ_ = sort(unique(wgtM_t_[1].nzval))
+# n_node = []
+# n_link = []
+# @showprogress for θ = θ_
+#     A = wgtM_t_[1] .> θ
+#     push!(n_node, count(.!iszero.(sum(A, dims = 2))))
+#     push!(n_link, sum(A))
+# end
+# pop!(n_node); pop!(n_link); pop!(θ_)
+
+# plot(θ_, n_node, label = "n_node", lw = 2, scale = :log10)
+# plot(θ_, n_link, label = "n_link", lw = 2, scale = :log10)
+
+# heatmap(pts, 1:5, log10.(θt))
+# heatmap(pts, 1:N, log10.(θv))
