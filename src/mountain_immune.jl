@@ -10,7 +10,7 @@ device = gethostname()
 
 @load "data_immune/cached_data.jld2"
 
-wds = parse(Int64, last(device)):3:15
+wds = parse(Int64, last(device)):2:15
 folds = 1:1
 pts = 5:5:95
 
@@ -29,14 +29,14 @@ for wd = wds
         push!(wgtM_t_, wgtM_t)
         nz_ = wgtM_t.nzval
         # θt[fold, :] .= percentile.(Ref(nz_), pts)
-        θt[fold, :] .= pts' * maximum(nz_)
+        θt[fold, :] .= maximum(nz_) * pts
     end
     θv = zeros(N, length(pts))
     for iv = 1:N
         wgtM_v = W_[iv]
         nz_ = wgtM_v.nzval
         # θv[iv, :] .= percentile.(Ref(nz_), pts)
-        θv[iv, :] .= pts' * maximum(nz_)
+        θv[iv, :] .= maximum(nz_) * pts
     end
 
     for fold = folds
