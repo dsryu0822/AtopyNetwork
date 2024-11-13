@@ -8,17 +8,17 @@ using Base.Threads, Dates
 device = gethostname()
 @info "$(now()) - $device $(nthreads()) threads"
 
-@load "data_immune/cached_data.jld2"
+@load "data_nature/cached_data.jld2"
 
-wds = 1:3:15
+wds = 1:5
 folds = 1:5
 pts = 5:5:95
 
 N = length(txts)
 result = DataFrame(fd = Int64[], wd = Int64[], pt = Float64[], cp = Float64[], es = Float64[], cs1 = Float64[], cs2 = Float64[])
 for wd = wds
-    W_ = jldopen("../../temp/test_$wd.jld2")["W_"]
-    # wd = 1; W_ = jldopen("weight_immune/test_$wd.jld2")["W_"]
+    # W_ = jldopen("../../temp/test_$wd.jld2")["W_"]
+    wd = 1; W_ = jldopen("cached_$wd.jld2")["W_"]
     # @load "/home/$(ENV["LOGNAME"])/temp/test_$wd.jld2"
 
     wgtM_t_ = []
