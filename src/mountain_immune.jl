@@ -28,8 +28,8 @@ for wd = wds
         wgtM_t = sum(W_[idx_t])
         push!(wgtM_t_, wgtM_t)
         nz_ = wgtM_t.nzval
-        # nz_ = collect(wgtM_t_[fold][.!iszero.(wgtM_t_[fold])])
-        θt[fold, :] .= percentile.(Ref(nz_), pts)
+        # θt[fold, :] .= percentile.(Ref(nz_), pts)
+        θt[fold, :] .= pts' * maximum(nz_)
     end
     θv = zeros(N, length(pts))
     for iv = 1:N
