@@ -12,7 +12,7 @@ device = gethostname()
 
 wds = parse(Int64, last(device)):2:15
 folds = 1:5
-pts = 5:5:95
+pts = 90:1:100
 
 N = length(txts)
 result = DataFrame(fd = Int64[], wd = Int64[], pt = Float64[], cp = Float64[], es = Float64[], cs1 = Float64[], cs2 = Float64[])
@@ -59,7 +59,7 @@ for wd = wds
 
             try
                 push!(result, [fold, wd, pts[ptk], cp, es, cs1, cs2])
-                CSV.write("cover_score percent $device [5, 95].csv", result)
+                CSV.write("cover_score $device [90, 100].csv", result)
             catch
                 @error "error in $fold, $wd, $(pts[ptk])"
             end
