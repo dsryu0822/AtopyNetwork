@@ -11,7 +11,7 @@ device = gethostname()
 @load "data_immune/cached_data.jld2"
 
 wds = parse(Int64, last(device)):2:15
-folds = 1:1
+folds = 1:5
 pts = 5:5:95
 
 N = length(txts)
@@ -52,7 +52,7 @@ for wd = wds
                 dA[iv] = count(adjM_t - adjM_v .< 0)
                 vol[iv] = count(adjM_v)/2
             end
-            cp = count(iszero.(dA)) / length(dA)
+            cp = count(proper .* iszero.(dA)) / length(dA)
             es = sum(vol) / length(vol)
             cs1 = cp * es
             cs2 = (vol'iszero.(dA)) / length(dA)
