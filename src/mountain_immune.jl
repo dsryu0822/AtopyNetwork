@@ -28,15 +28,15 @@ for wd = wds
         wgtM_t = sum(W_[idx_t])
         push!(wgtM_t_, wgtM_t)
         nz_ = wgtM_t.nzval
-        # θt[fold, :] .= percentile.(Ref(nz_), pts)
-        θt[fold, :] .= maximum(nz_) * pts
+        θt[fold, :] .= percentile.(Ref(nz_), pts)
+        # θt[fold, :] .= maximum(nz_) * pts
     end
     θv = zeros(N, length(pts))
     for iv = 1:N
         wgtM_v = W_[iv]
         nz_ = wgtM_v.nzval
-        # θv[iv, :] .= percentile.(Ref(nz_), pts)
-        θv[iv, :] .= maximum(nz_) * pts
+        θv[iv, :] .= percentile.(Ref(nz_), pts)
+        # θv[iv, :] .= maximum(nz_) * pts
     end
 
     for fold = folds
@@ -52,7 +52,8 @@ for wd = wds
                 dA[iv] = count(adjM_t - adjM_v .< 0)
                 vol[iv] = count(adjM_v)/2
             end
-            cp = count(proper .&& iszero.(dA)) / length(dA)
+            proper, dA, vol = proper[idx_v], dA[idx_v], vol[idx_v]
+            cp = sum(proper .* iszero.(dA)) / length(dA)
             es = sum(vol) / length(vol)
             cs1 = cp * es
             cs2 = (vol'iszero.(dA)) / length(dA)
