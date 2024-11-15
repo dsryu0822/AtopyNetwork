@@ -52,7 +52,7 @@ for wd = wds
                 dA[iv] = count(adjM_t - adjM_v .< 0)
                 vol[iv] = count(adjM_v)/2
             end
-            cp = count(proper .* iszero.(dA)) / length(dA)
+            cp = count(proper .&& iszero.(dA)) / length(dA)
             es = sum(vol) / length(vol)
             cs1 = cp * es
             cs2 = (vol'iszero.(dA)) / length(dA)
