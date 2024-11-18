@@ -10,12 +10,11 @@ device = gethostname()
 
 hargs = (; xlabel = "Window size", ylabel = "Percentile", size = [800, 800])
 
-result = CSV.read("data_immune/cover_score percentile [90, 100].csv", DataFrame)
+result = CSV.read("data_immune/cover_score [90, 100].csv", DataFrame)
+wd_ = unique(result.wd)
+pt_ = unique(result.pt)
 gdf1 = groupby(result, :fd)
-surface(1:15, 90:1:100, sum([reshape(df.cp, 11, :) for df in gdf1]) ./ 5, zformatter = x -> "$(trunc(Int64, 100x)) %"; hargs...)
-# surface(1:15, 90:1:100, sum([reshape(df.es, 11, :) for df in gdf1]) ./ 5; hargs...)
-surface(1:15, 90:1:100, sum([reshape(df.cs1, 11, :) for df in gdf1]) ./ 5, camera = [30, 60]; hargs...)
-surface(1:15, 90:1:100, sum([reshape(df.cs2, 11, :) for df in gdf1]) ./ 5; hargs...)
+surface(wd_, 90:99, sum([reshape(df.cp, length(pt_), :) for df in gdf1]) ./ 5, zformatter = x -> "$(trunc(Int64, 100x)) %", yscale = :log10; hargs...)
 
 scatter(
     vcat([df.wd for df in groupby(result, :wd)]...),

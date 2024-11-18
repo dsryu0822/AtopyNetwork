@@ -12,7 +12,7 @@ device = gethostname()
 
 wds = parse(Int64, last(device)):2:10
 folds = 1:5
-pts = sort(100*(1 .- logrange(1e-4, .1, 10)))
+pts = sort(100*(1 .- logrange(1e-4, .05, 10)))
 # wds = 1:1
 # folds = 1:1
 # pts = 90:100
