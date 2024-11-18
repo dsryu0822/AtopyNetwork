@@ -12,14 +12,19 @@ device = gethostname()
 
 wds = parse(Int64, last(device)):2:10
 folds = 1:5
-pts = 1 .- logrange(0.001, .1, 10)
+pts = sort(100*(1 .- logrange(1e-4, .1, 10)))
+# wds = 1:1
+# folds = 1:1
+# pts = 90:100
 
 N = length(txts)
 result = DataFrame(fd = Int64[], wd = Int64[], pt = Float64[], cp = Float64[], es = Float64[], cs1 = Float64[], cs2 = Float64[])
 for wd = wds
-    W_ = jldopen("../../temp/test_$wd.jld2")["W_"]
-    # wd = 1; W_ = jldopen("weight_immune/test_$wd.jld2")["W_"]
-    # @load "/home/$(ENV["LOGNAME"])/temp/test_$wd.jld2"
+    if Sys.iswindows()
+        W_ = jldopen("weight_immune/test_$wd.jld2")["W_"]
+    else
+        W_ = jldopen("../../temp/test_$wd.jld2")["W_"]
+    end
 
     wgtM_t_ = []
     θt = zeros(length(folds), length(pts))
@@ -42,18 +47,18 @@ for wd = wds
     for fold = folds
         idx_v = fold:5:N; idx_t = setdiff(1:N, idx_v)
         for ptk = eachindex(pts)
-            adjM_t = wgtM_t_[fold] .> θt[fold, ptk]
+            adjM_t = wgtM_t_[fold] .≥ θt[fold, ptk]
 
             proper, dA, vol = zeros(N), zeros(N), zeros(N)
             @threads for iv = idx_v
                 wgtM_v = W_[iv]
-                adjM_v = wgtM_v .> θv[iv, ptk]
+                adjM_v = wgtM_v .≥ θv[iv, ptk]
                 proper[iv] = adjM_t != adjM_v
                 dA[iv] = count(adjM_t - adjM_v .< 0)
                 vol[iv] = count(adjM_v)/2
             end
             proper, dA, vol = proper[idx_v], dA[idx_v], vol[idx_v]
-            cp = sum(proper .* iszero.(dA)) / length(dA)
+            # cp = sum(proper .* iszero.(dA)) / length(dA)
             cp = count(iszero.(dA)) / length(dA)
             es = sum(vol) / length(vol)
             cs1 = cp * es
