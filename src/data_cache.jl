@@ -12,14 +12,15 @@ gowords = [gowords; titlecase.(gowords)]
 stopwords = [stopwords; titlecase.(stopwords)]
 
 cleaning = Dict(" " => " ", "None\r\n" => "", "-" => " ", "+" => " ")
-cell = Dict("T cell" => "T-cell", "B cell" => "B-cell")
+cell = Dict("T cell" => "T-cell", "B cell" => "B-cell", "NK cell" => "NK-cell")
 
-# cd("data_nature");
+cd("data_nature");
 # @time raw = read.(readdir("Parkinson", join = true), String);
-cd("data_immune"); @time raw = [
-    read.(readdir("NI_article", join = true), String);
-    read.(readdir("NRI_review", join = true), String);
-    read.(readdir("NI_review", join = true), String)];
+@time raw = read.(readdir("Cell_Death_Disease", join = true), String);
+# cd("data_immune"); @time raw = [
+#     read.(readdir("NI_article", join = true), String);
+#     read.(readdir("NRI_review", join = true), String);
+#     read.(readdir("NI_review", join = true), String)];
 txts = replace.(raw, cleaning...)
 txts = replace.(txts, cell...)
 txts = replace.(txts, "cells" => "cell ")
@@ -64,13 +65,13 @@ for _crps in crps_
     _crps.lexicon = crps.lexicon
 end
 
-for wd = 1:15
+for wd = 1:10
     @info "Window size: $wd"
     W_ = Array{SparseMatrixCSC}(undef, N)
     @showprogress @threads for c in 1:N
         W_[c] = CooMatrix(crps_[c], window = wd, normalize = false).coom
     end
-    @save "cached_$(wd).jld2" W_
+    @save "cached_wd_$(wd).jld2" W_
 end
 # degree = vec(sum(adjM_t, dims = 2))
 # IN = WordNetwork(adjM_t, voca)
@@ -93,32 +94,32 @@ end
 
 # graphplot(G, names = voca[idx_sbgrph], lims = [-.3, .3])
 
-roulette = rand(1:20, length(txts))
+# roulette = rand(1:20, length(txts))
 
-n_term = zeros(Int64, 20)
-@showprogress @threads for rl = 1:20
-    crps = txts[roulette .≤ rl] .|> StringDocument |> Corpus
-    remove_case!(crps) # 370763 -> 370330
-    update_lexicon!(crps) # 4576 doc in 104s
-    [delete!(crps.lexicon, stopword) for stopword in stopwords];
-    allow_ascii = [48:57; 65:90; 97:122; 43; 45; 65296:65305]
-    for (k, v) in crps.lexicon
-        _lexi = collect(k)
-        try
-            if !all(codepoint.(_lexi) .∈ Ref(allow_ascii)) ||
-            !(islowercase(first(k)) || isuppercase(first(k))) ||
-            v ≤ 1
+# n_term = zeros(Int64, 20)
+# @showprogress @threads for rl = 1:20
+#     crps = txts[roulette .≤ rl] .|> StringDocument |> Corpus
+#     remove_case!(crps) # 370763 -> 370330
+#     update_lexicon!(crps) # 4576 doc in 104s
+#     [delete!(crps.lexicon, stopword) for stopword in stopwords];
+#     allow_ascii = [48:57; 65:90; 97:122; 43; 45; 65296:65305]
+#     for (k, v) in crps.lexicon
+#         _lexi = collect(k)
+#         try
+#             if !all(codepoint.(_lexi) .∈ Ref(allow_ascii)) ||
+#             !(islowercase(first(k)) || isuppercase(first(k))) ||
+#             v ≤ 1
 
-                delete!(crps.lexicon, k)
-            end
-        catch
-            @error "error in $v, $k"
-            delete!(crps.lexicon, k)
-        end
-    end
-    n_term[rl] = length(crps.lexicon)
-end
+#                 delete!(crps.lexicon, k)
+#             end
+#         catch
+#             @error "error in $v, $k"
+#             delete!(crps.lexicon, k)
+#         end
+#     end
+#     n_term[rl] = length(crps.lexicon)
+# end
 
-n_paper = [count(roulette .≤ rl) for rl in 1:20]
-plot(n_paper, n_term, legend = :none, size = [500, 500], color = :black, lw = 2,
-xticks = [410, 8826], yticks = [18634, 134934], yformatter = :plain)
+# n_paper = [count(roulette .≤ rl) for rl in 1:20]
+# plot(n_paper, n_term, legend = :none, size = [500, 500], color = :black, lw = 2,
+# xticks = [410, 8826], yticks = [18634, 134934], yformatter = :plain)

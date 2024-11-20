@@ -10,11 +10,11 @@ device = gethostname()
 
 hargs = (; xlabel = "Window size", ylabel = "Percentile", size = [800, 800])
 
-result = CSV.read("data_immune/cover_score [90, 100].csv", DataFrame)
+result = CSV.read("data_immune/cover_score [95, 100].csv", DataFrame)
 wd_ = unique(result.wd)
 pt_ = unique(result.pt)
 gdf1 = groupby(result, :fd)
-surface(wd_, 90:99, sum([reshape(df.cp, length(pt_), :) for df in gdf1]) ./ 5, zformatter = x -> "$(trunc(Int64, 100x)) %", yscale = :log10; hargs...)
+heatmap(wd_, 90:99, sum([reshape(df.cp, length(pt_), :) for df in gdf1]) ./ 5, zformatter = x -> "$(trunc(Int64, 100x)) %", yscale = :log10; hargs...)
 
 scatter(
     vcat([df.wd for df in groupby(result, :wd)]...),
