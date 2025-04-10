@@ -2,13 +2,14 @@ include("../core/header.jl")
 
 files = [(joinpath.(root, files) for (root, dirs, files) in walkdir("data"))...;]
 filter!(x -> occursin(".txt", x), files)
+files = replace.(files, "\\" => "/")
 feature_names = ["pareto", "max_central", "max_weight", "max_core", "max_ind", "max_pagerank", "min_cut", "min_dom", "diameter", "radius", "num_leaf", "coef_clustering", "coef_assortativity", "entropy", "mad", "runtime", ]
 
 featureL = DataFrame(;
-    ID = replace.(last.(split.(files, "\\")), ".txt" => ""),
+    ID = replace.(last.(split.(files, "/")), ".txt" => ""),
     # y = occursin.("accept", files),
     y = .!(occursin.("reject", files) .|| occursin.("submitted", files) .|| occursin.("withdrawn", files)),
-    year = parse.(Int64, getindex.(split.(files, "\\"), 2))
+    year = parse.(Int64, getindex.(split.(files, "/"), 2))
 )
 
 binary_check = ([240, 423, 500, 684, 856, 1091, 1570, 2257] .== [count(df.y) for df in groupby(featureL, :year)])
