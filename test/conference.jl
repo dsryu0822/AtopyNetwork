@@ -25,13 +25,13 @@ feature = [featureL featureR]
 # feature = feature[feature.year .< 2022, :]
 # feature = CSV.read("graph.csv", DataFrame)
 
-drs = eachrow(feature)
 errors = []
+drs = eachrow(feature)
 @showprogress @threads for idx in eachindex(drs)
 try
     tic = now()
     dr = drs[idx]
-    if dr.connected > 0 continue end
+    # if dr.connected > 0 continue end
     file = files[idx]
     txt = read(file, String)
     crps = [txt |> StringDocument] |> Corpus
