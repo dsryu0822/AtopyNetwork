@@ -1,0 +1,21 @@
+
+2018a: {"accepted_oral_papers", "accepted_poster_papers"},
+2018r: {"rejected_papers", "withdrawn_papers"},
+
+2019a: {"oral_presentations", "poster_presentations"},
+2019r: {"withdrawn_rejected_submissions"},
+
+2020a: {"oral_presentations", "poster_presentations", "spotlight_presentations"},
+2020r: {"withdrawn_rejected_submissions"},
+
+2021a: {"oral_presentations", "poster_presentations", "spotlight_presentations"},
+2021r: {"withdrawn_rejected_submissions"},
+
+2022a: {"oral_submissions", "poster_submissions", "spotlight_submissions"},
+2022r: {"desk_rejected_withdrawn", "submitted_submissions"},
+
+2023a: {"notable_top_5", "notable_top_25", "poster"},
+2023r: {"desk_rejected_withdrawn", "submitted"},
+
+2024a: {"accept_oral","accept_poster","accept_spotlight"},
+2024r: {"desk_rejected_submissions", "reject", "withdrawn_submissions"},

@@ -18,3 +18,7 @@ term = [stem_all(Stemmer("english"), trm) for trm in lowercase.(term)]
 unique!(term)
 gowords = DataFrame(; term)
 CSV.write("gowords.csv", gowords, bom = true)
+
+page = read_html("https://openreview.net/group?id=ICLR.cc/2024/Conference")
+page = read_html("http://localhost:1313/ko/posts/363#예문")
+html_elements(page, ["h1"]) |> html_text3

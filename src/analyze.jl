@@ -18,9 +18,9 @@ pts = sort(100*(1 .- logrange(1e-4, .05, 10)))
 result = DataFrame(fd = Int64[], wd = Int64[], pt = Float64[], cp = Float64[], es = Float64[], cs1 = Float64[], cs2 = Float64[])
 for wd = wds
     if Sys.iswindows()
-        W_ = jldopen("../_cached/$sbjt/cached_wd_$wd.jld2")["W_"]
+        W_ = jldopen("../_cached/$sbjt/wd_$wd.jld2")["W_"]
     else
-        W_ = jldopen("/home/$(ENV["LOGNAME"])/_cached/$sbjt/cached_wd_$wd.jld2")["W_"]
+        W_ = jldopen("/home/$(ENV["LOGNAME"])/_cached/$sbjt/wd_$wd.jld2")["W_"]
     end
     N = length(W_)
 
@@ -31,13 +31,21 @@ for wd = wds
         wgtM_t = sum(W_[idx_t])
         push!(wgtM_t_, wgtM_t)
         nz_ = wgtM_t.nzval
-        θt[fold, :] .= percentile.(Ref(nz_), pts)
+        if isempty(nz_)
+            θt[fold, :] .= zeros(length(pts))
+        else
+            θt[fold, :] .= percentile.(Ref(nz_), pts)
+        end
     end
     θv = zeros(N, length(pts))
     for iv = 1:N
         wgtM_v = W_[iv]
         nz_ = wgtM_v.nzval
-        θv[iv, :] .= percentile.(Ref(nz_), pts)
+        if isempty(nz_)
+            θv[iv, :] .= zeros(length(pts))
+        else
+            θv[iv, :] .= percentile.(Ref(nz_), pts)
+        end
     end
 
     for fold = folds
