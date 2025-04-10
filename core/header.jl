@@ -13,11 +13,11 @@ cm = Plots.cm
 device = gethostname() # In julia v1.11, it could be replaced by `Sys.username()`
 if Sys.iswindows()
     if device != "Sickbook"
-        cd("G:/DDM")
+        cd("G:/network")
     end
     # device = ENV["COMPUTERNAME"];
 elseif Sys.islinux()
-    cd("/home/$(ENV["LOGNAME"])/g/DDM")
+    cd("/home/$(ENV["LOGNAME"])/g/network")
     # device = ENV["LOGNAME"];
 end
 @info "$(now()) - @$device $(nthreads()) threads"

@@ -1,7 +1,5 @@
 include("../core/header.jl")
 
-cd("G:/network")
-
 files = [(joinpath.(root, files) for (root, dirs, files) in walkdir("data"))...;]
 filter!(x -> occursin(".txt", x), files)
 feature_names = ["pareto", "max_central", "max_weight", "max_core", "max_ind", "max_pagerank", "min_cut", "min_dom", "diameter", "radius", "num_leaf", "coef_clustering", "coef_assortativity", "entropy", "mad", "runtime", ]
